@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 const bcrypt = require('bcryptjs');
+const token = require('jsonwebtoken');
 
 
 const userSchema = new Schema({
@@ -13,6 +14,10 @@ const userSchema = new Schema({
         updatedAt: 'updatedAt'
     }
 });
+userSchema.methods.comparePassword = async function(data) {
+    
+    return bcrypt.compare(data.password, this.password);
+}
 
 const User = mongoose.model('user', userSchema);
 module.exports = User;

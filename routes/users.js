@@ -2,17 +2,23 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const passport = require('passport');
+const bcrypt = require('bcryptjs');
 
 const User = require('../models/user');
 
 
 //validation schema
 
-const userSchema = Joi.object().keys({
+const registerSchema = Joi.object().keys({
     email: Joi.string().email().required(),
     username: Joi.string().required(),
     password: Joi.string().regex(/^[a-zA-Z0-9]{6,30}$/).required(),
     confirmationPassword: Joi.any().valid(Joi.ref('password')).required()
+})
+
+const loginSchema = Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().regex(/^[a-zA-Z0-9]{6,30}$/).required()
 })
 
 router.route('/register')
@@ -21,7 +27,7 @@ router.route('/register')
     })
     .post(async (req, res, next) => {
         try {
-            const result = Joi.validate(req.body, userSchema);
+            const result = Joi.validate(req.body, registerSchema);
             if (result.error) {
                 req.flash('error', 'Data entered is not valid. Please try again.');
                 res.redirect('/users/register');
@@ -51,8 +57,41 @@ router.route('/register')
         }
     })
 
-router.get('/login', (req, res) => {
-    res.render('login');
-});
+router.route('/login')
+    .get((req, res) => {
+        res.render('login');
+    })
+    .post(async (req, res, next) => {
+        try {
+            const result = Joi.validate(req.body, loginSchema);
+            if (result.error) {
+                req.flash('error', 'Data entered is not valid. Please try again.');
+                res.redirect('/users/login');
+                return;
+            }
+            // const email = await User.findOne({ 'email': result.value.email }, (err, user) => {
+            //     if (!email) {
+            //         req.flash('error', 'User is not found.');
+            //         res.redirect('/users/login');
+            //         return;
+            //     } 
+            // })
+            User.findOne({
+                email: result.value.email
+            })
+                .exec((err, user) => {
+                    if (err || !user) return res.status(404).send({ message: 'User not found' });
+
+                    const isPasswordValid = bcrypt.compareSync(result.value.password, user.password);
+                    if (!isPasswordValid) return res.status(401).send({ message: 'Incorrect password' });
+
+                    res.render('index', { isAuthenticated: true });
+                });
+            
+        } catch (error) {
+            next(error);
+        }
+    })
+//jwt token(access, refresh)
 
 module.exports = router;
