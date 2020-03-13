@@ -3,6 +3,8 @@ const router = express.Router();
 const Joi = require('joi');
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { jwtSecret } = require('../config');
 
 const User = require('../models/user');
 
@@ -83,12 +85,20 @@ router.route('/login')
                     if (err || !user) return res.status(404).send({ message: 'User not found' });
 
                     const isPasswordValid = bcrypt.compareSync(result.value.password, user.password);
-                    if (!isPasswordValid) return res.status(401).send({ message: 'Incorrect password' });
-
-                    res.render('index', { isAuthenticated: true });
+                    //if (!isPasswordValid) return res.status(401).send({ message: 'Incorrect password' });
+                    if (isPasswordValid) {
+                        const token = jwt.sign(user._id.toString(), jwtSecret);
+                        if (jwt.verify(token, jwtSecret)) res.render('index', { isAuthenticated: true });
+                    } else {
+                        return res.status(401).send({ message: 'Incorrect password' });
+                    }
+                    
                 });
             
         } catch (error) {
+            if (error instanceof jwt.JsonWebTokenError) {
+                res.status(401).json({ message: 'Invalid token!' });
+            } 
             next(error);
         }
     })

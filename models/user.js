@@ -7,7 +7,8 @@ const token = require('jsonwebtoken');
 const userSchema = new Schema({
     email: String,
     username: String,
-    password: String
+    password: String,
+    token: String
 }, {
     timestamps: {
         createdAt: 'createdAt',
@@ -15,7 +16,6 @@ const userSchema = new Schema({
     }
 });
 userSchema.methods.comparePassword = async function(data) {
-    
     return bcrypt.compare(data.password, this.password);
 }
 
