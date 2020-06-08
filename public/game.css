@@ -1,0 +1,72 @@
+.game {
+    font-family: monospace, Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-weight: bolder;
+}
+
+.game .nav {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.game td {
+    text-align: center;
+    cursor: pointer;
+    border: 3px solid #39e;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+}
+
+.game td.checked {
+    background: #fc0;
+    border-color: #fc0;
+}
+
+.game td.correct {
+    background: #6c6;
+    color: #fff;
+}
+
+.game td.incorrect {
+    background: #f66;
+    color: #fff;
+}
+
+.game .button {
+    margin-top: 5px;
+    background: #39e;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-style: none;
+    margin-bottom: 2px;
+    padding: 15px 10px;
+    outline:none;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.game .reload {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    background-image: url(reload.png);
+    background-size: 100% 100%;
+}
+
+.game .score {
+    font-size: 32px;
+    padding: 0 10px;
+}
+
+.game .score.positive {
+    color: #6c6;
+}
+
+.game .score.negative {
+    color: #f33;
+}
+

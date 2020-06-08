@@ -88,7 +88,7 @@ router.route('/login')
                     //if (!isPasswordValid) return res.status(401).send({ message: 'Incorrect password' });
                     if (isPasswordValid) {
                         const token = jwt.sign(user._id.toString(), jwtSecret);
-                        if (jwt.verify(token, jwtSecret)) res.render('index', { isAuthenticated: true });
+                        if (jwt.verify(token, jwtSecret)) res.render('game', { isAuthenticated: true });
                     } else {
                         return res.status(401).send({ message: 'Incorrect password' });
                     }
@@ -101,6 +101,10 @@ router.route('/login')
             } 
             next(error);
         }
+    })
+
+router.get('/game', (req, res) => {
+        res.render('game');
     })
 //jwt token(access, refresh)
 
