@@ -104,8 +104,13 @@ router.route('/login')
     })
 
 router.get('/game', (req, res) => {
-        res.render('game');
-    })
+    res.render('game');
+})
+
+router.get('/logout', (req, res) => {
+    res.render('index');
+})
+
 //jwt token(access, refresh)
 
 module.exports = router;
